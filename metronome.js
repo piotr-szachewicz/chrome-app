@@ -1,9 +1,9 @@
 var clickSound = new Audio('click.mp3');
-var interval;
 
-function playClick() {
+var worker = new Worker('worker.js');
+worker.addEventListener('message', function(e) {
   clickSound.play();
-}
+});
 
 document.addEventListener('DOMContentLoaded', function() {
   var startButton = document.querySelector('#start');
@@ -13,12 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
   startButton.addEventListener('click', function() {
     var msBetweenClicks = 60000/parseInt(bpmField.value);
 
-    clearInterval(interval);
-    interval = setInterval(playClick, msBetweenClicks);
+    worker.postMessage({type: 'start', interval: msBetweenClicks});
   });
 
   stopButton.addEventListener('click', function() {
-    clearInterval(interval);
+    worker.postMessage({type: 'stop'});
   });
 });
-
