@@ -1,8 +1,6 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
 
-var clickSound = new Audio('click.mp3');
-
 module.exports = React.createClass({
 	getInitialState: function() {
 		return {
@@ -24,8 +22,27 @@ module.exports = React.createClass({
 		this.setState({switchedOn: false});
 	},
 
+	componentWillMount() {
+		this.clickSound = new Audio('click.mp3');
+	},
+
+	componentDidUpdate(prevProps, prevState) {
+		clearInterval(this.interval);
+
+		if (this.state.switchedOn) {
+		  this.interval = setInterval(this.playClick, this.milisecondsBetweenClicks());
+		}
+	},
+
+	playClick() {
+		this.clickSound.play();
+	},
+
+	milisecondsBetweenClicks() {
+		return 60000/this.state.bpm;
+	},
+
 	render: function() {
-		console.log(this.state);
 		return <div>
 			<input type='number' onChange={this.valueChanged} value={this.state.bpm} min='1' max='300'/>
 			<button type="button" onClick={this.startClicked}>Start</button>
