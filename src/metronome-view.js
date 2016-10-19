@@ -1,5 +1,6 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
+var Metronome = require('./metronome');
 
 module.exports = React.createClass({
 	getInitialState: function() {
@@ -23,26 +24,17 @@ module.exports = React.createClass({
 	},
 
 	componentWillMount() {
-		this.clickSound = new Audio('click.mp3');
-		this.worker = new Worker('../worker.js');
-
-		this.worker.addEventListener('message', this.playClick);
+		this.metronome = new Metronome();
+		this.metronome.setBpm(this.state.bpm);
 	},
 
 	componentDidUpdate(prevProps, prevState) {
-		this.worker.postMessage({type: 'stop'});
+		this.metronome.stop();
 
 		if (this.state.switchedOn) {
-			this.worker.postMessage({type: 'start', interval: this.milisecondsBetweenClicks()});
+			this.metronome.setBpm(this.state.bpm);
+			this.metronome.start();
 		}
-	},
-
-	playClick() {
-		this.clickSound.play();
-	},
-
-	milisecondsBetweenClicks() {
-		return 60000/this.state.bpm;
 	},
 
 	render: function() {
