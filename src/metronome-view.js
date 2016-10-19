@@ -24,13 +24,16 @@ module.exports = React.createClass({
 
 	componentWillMount() {
 		this.clickSound = new Audio('click.mp3');
+		this.worker = new Worker('../worker.js');
+
+		this.worker.addEventListener('message', this.playClick);
 	},
 
 	componentDidUpdate(prevProps, prevState) {
-		clearInterval(this.interval);
+		this.worker.postMessage({type: 'stop'});
 
 		if (this.state.switchedOn) {
-		  this.interval = setInterval(this.playClick, this.milisecondsBetweenClicks());
+			this.worker.postMessage({type: 'start', interval: this.milisecondsBetweenClicks()});
 		}
 	},
 
