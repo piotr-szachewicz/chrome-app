@@ -10,6 +10,7 @@ self.addEventListener('message', function(e){
       clearInterval(interval);
       interval = setInterval(sendClickMessage, e.data.interval);
       break;
-    case 'stop': clearInterval(interval);
+    case 'stop':
+      clearInterval(interval);
   };
 }, false);
